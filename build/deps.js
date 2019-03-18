@@ -73,6 +73,24 @@ var deps = {
 		],
 		desc: 'Edit toolbar.',
 		deps: ['EditHandlers', 'CommonUI']
+	},
+
+	Transform: {
+		src: [
+			'transform/Util.js',
+			'transform/Path.Transform.js',
+			'transform/Matrix.js'
+		]
+	},
+
+	Drag: {
+		src: [
+			'drag/Canvas.js',
+			'drag/Path.Drag.js',
+			'drag/Path.Transform.js',
+			'drag/SVG.js',
+			'drag/SVG.VML.js'
+		]
 	}
 };
 

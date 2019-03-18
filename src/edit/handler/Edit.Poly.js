@@ -64,6 +64,8 @@ L.Edit.Poly = L.Handler.extend({
 		for (var i = 0; i < this.latlngs.length; i++) {
 			this._verticesHandlers.push(new L.Edit.PolyVerticesEdit(this._poly, this.latlngs[i], this._poly.options.poly));
 		}
+
+		// this._transformHandler = new L.Handler.PathTransform( this._poly );
 	},
 
 	_updateLatLngs: function (e) {
@@ -500,6 +502,7 @@ L.Polyline.addInitHook(function () {
 	if (L.Edit.Poly) {
 
 		this.editing = new L.Edit.Poly(this);
+		// this.transform = new L.Handler.PathTransform(this, this.options.transform);
 
 		if (this.options.editable) {
 			this.editing.enable();
