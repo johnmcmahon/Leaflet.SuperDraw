@@ -154,6 +154,23 @@ L.Handler.PathTransform = L.Handler.extend({
       .on('dragend',   this._onDragEnd,   this)
 			.on('editstart', this._onEditStart, this)
 			.on('edit', this._onEditEnd, this);
+
+		var debounce = (fn, time) => {
+			let timeout;
+
+			return function() {
+				const functionCall = () => fn.apply(this, arguments);
+
+				clearTimeout(timeout);
+				timeout = setTimeout(functionCall, time);
+			}
+		};
+
+    var onZoomEnd = debounce( function() {
+			this.reset();
+		}, 500 );
+
+    this._path._map.on( 'zoomend', onZoomEnd, this );
   },
 
 
@@ -165,6 +182,8 @@ L.Handler.PathTransform = L.Handler.extend({
     this._path
       .off('dragstart', this._onDragStart, this)
       .off('dragend',   this._onDragEnd,   this);
+
+		this._path._map.off( 'zoomend', this.reset, this );
 
     this._handlersGroup = null;
     this._rect = null;
@@ -794,9 +813,7 @@ L.Handler.PathTransform = L.Handler.extend({
 
 
 L.Polyline.addInitHook(function() {
-	this.transform = new L.Handler.PathTransform(this, this.options.transform);
-  // if (this.options.transform) {
-  //   this.transform = new L.Handler.PathTransform(this, this.options.transform);
-  //   // this.transform.enable();
-  // }
+  if (this.options.transform) {
+    this.transform = new L.Handler.PathTransform(this, this.options.transform);
+  }
 });
