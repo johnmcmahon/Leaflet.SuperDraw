@@ -96,7 +96,7 @@ L.Handler.PathTransform = L.Handler.extend({
    * @param  {L.Path} path
    */
   initialize: function(path) {
-  	console.log( path );
+  	// console.log( path );
     // references
 		// console.log( path );
     this._path = path;
@@ -153,7 +153,9 @@ L.Handler.PathTransform = L.Handler.extend({
     this._createHandlers();
     this._path
       .on('dragstart', this._onDragStart, this)
-      .on('dragend',   this._onDragEnd,   this);
+      .on('dragend',   this._onDragEnd,   this)
+			.on('editstart', this._onEditStart, this)
+			.on('edit', this._onEditEnd, this);
   },
 
 
@@ -165,6 +167,7 @@ L.Handler.PathTransform = L.Handler.extend({
     this._path
       .off('dragstart', this._onDragStart, this)
       .off('dragend',   this._onDragEnd,   this);
+
     this._handlersGroup = null;
     this._rect = null;
     this._handlers = [];
@@ -585,7 +588,7 @@ L.Handler.PathTransform = L.Handler.extend({
       .flip();
 
     this._update();
-    this._path.fire('rotate', { layer: this._path, rotation: this._angle });
+    this._path.fire('rotate', { layer: this._path, rotation: this._angle, origin: this._rect.getCenter() });
   },
 
 
@@ -778,7 +781,19 @@ L.Handler.PathTransform = L.Handler.extend({
       translate: L.point(matrix[4], matrix[5]),
       layer: this._path
     });
-  }
+  },
+
+
+	_onEditStart: function() {
+  	this._rectShape = null;
+  	this._path.transform.disable();
+	},
+
+
+	_onEditEnd: function() {
+		this._path.transform.enable();
+		// this._path.transform._updateHandlers();
+	}
 });
 
 

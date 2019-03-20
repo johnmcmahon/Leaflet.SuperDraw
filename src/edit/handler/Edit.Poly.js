@@ -64,8 +64,6 @@ L.Edit.Poly = L.Handler.extend({
 		for (var i = 0; i < this.latlngs.length; i++) {
 			this._verticesHandlers.push(new L.Edit.PolyVerticesEdit(this._poly, this.latlngs[i], this._poly.options.poly));
 		}
-
-		// this._transformHandler = new L.Handler.PathTransform( this._poly );
 	},
 
 	_updateLatLngs: function (e) {
@@ -162,6 +160,10 @@ L.Edit.PolyVerticesEdit = L.Handler.extend({
 			}
 			this._poly._map.addLayer(this._markerGroup);
 		}
+
+		this._poly
+			.on( 'transformstart', this._onTransformStart, this )
+			.on( 'transformed', this._onTransformEnd, this );
 	},
 
 	// @method removeHooks(): void
@@ -255,6 +257,18 @@ L.Edit.PolyVerticesEdit = L.Handler.extend({
 		return marker;
 	},
 
+	rotatePoint: function(map, latlngPoint, angleDeg, latlngCenter) {
+		var maxzoom = map.getMaxZoom();
+		if (maxzoom === Infinity)
+			maxzoom = map.getZoom();
+		var angleRad = angleDeg*Math.PI/180,
+				pPoint = map.project(latlngPoint, maxzoom),
+				pCenter = map.project(latlngCenter, maxzoom),
+				x2 = Math.cos(angleRad)*(pPoint.x-pCenter.x) - Math.sin(angleRad)*(pPoint.y-pCenter.y) + pCenter.x,
+				y2 = Math.sin(angleRad)*(pPoint.x-pCenter.x) + Math.cos(angleRad)*(pPoint.y-pCenter.y) + pCenter.y;
+		return map.unproject(new L.Point(x2,y2), maxzoom);
+	},
+
 	_onMarkerDragStart: function () {
 		this._poly.fire('editstart');
 	},
@@ -326,6 +340,8 @@ L.Edit.PolyVerticesEdit = L.Handler.extend({
 			}
 		}
 
+		// console.log( 'marker: ', marker );
+
 		if (marker._middleLeft) {
 			marker._middleLeft.setLatLng(this._getMiddleLatLng(marker._prev, marker));
 		}
@@ -336,7 +352,9 @@ L.Edit.PolyVerticesEdit = L.Handler.extend({
 		//refresh the bounds when draging
 		this._poly._bounds._southWest = L.latLng(Infinity, Infinity);
 		this._poly._bounds._northEast = L.latLng(-Infinity, -Infinity);
+		// console.log( this._poly._bounds );
 		var latlngs = this._poly.getLatLngs();
+		// console.log( 'latlngs:', latlngs );
 		this._poly._convertLatLngs(latlngs, true);
 		this._poly.redraw();
 		this._poly.fire('editdrag');
@@ -404,6 +422,14 @@ L.Edit.PolyVerticesEdit = L.Handler.extend({
 
 		this._poly.redraw();
 		this.updateMarkers();
+	},
+
+	_onTransformStart: function() {
+		this._poly.editing.disable();
+	},
+
+	_onTransformEnd: function() {
+		this._poly.editing.enable();
 	},
 
 	_updateIndexes: function (index, delta) {
@@ -493,7 +519,7 @@ L.Edit.PolyVerticesEdit = L.Handler.extend({
 });
 
 L.Polyline.addInitHook(function () {
-
+	console.log( 'init' );
 	// Check to see if handler has already been initialized. This is to support versions of Leaflet that still have L.Handler.PolyEdit
 	if (this.editing) {
 		return;
