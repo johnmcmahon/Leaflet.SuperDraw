@@ -228,6 +228,18 @@ L.EditToolbar.Edit = L.Handler.extend({
 				.on('touchend', this._onMarkerDragEnd, this)
 				.on('MSPointerUp', this._onMarkerDragEnd, this);
 		} else {
+			var latlngs = layer.getLatLngs()[ 0 ];
+
+			if ( latlngs.length === 4 ) {
+				if ( latlngs[ 0 ].lat === latlngs[ 3 ].lat &&
+					latlngs[ 0 ].lng === latlngs[ 1 ].lng &&
+					latlngs[ 1 ].lat === latlngs[ 2 ].lat &&
+					latlngs[ 2 ].lng === latlngs[ 3 ].lng ) {
+					console.log( 'match' );
+					layer.editing = null;
+				}
+			}
+
 			if (layer.editing) {
 				layer.editing.enable();
 			}

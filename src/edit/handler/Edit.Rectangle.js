@@ -32,7 +32,11 @@ L.Edit.Rectangle = L.Edit.SimpleShape.extend({
 			marker = e.target,
 			currentCornerIndex = marker._cornerIndex;
 
+		console.log( corners );
+		console.log( currentCornerIndex );
+		console.log( (currentCornerIndex + 2) % 4 );
 		this._oppositeCorner = corners[(currentCornerIndex + 2) % 4];
+		console.log( this._oppositeCorner );
 
 		this._toggleCornerMarkers(0, currentCornerIndex);
 	},
@@ -79,8 +83,15 @@ L.Edit.Rectangle = L.Edit.SimpleShape.extend({
 	_resize: function (latlng) {
 		var bounds;
 
+		var b = L.latLngBounds(latlng, this._oppositeCorner),
+				sw = b.getSouthWest(),
+				nw = b.getNorthWest(),
+				ne = b.getNorthEast(),
+				se = b.getSouthEast();
+
+		this._shape.setLatLngs( [ sw, nw, ne, se ] );
 		// Update the shape based on the current position of this corner and the opposite point
-		this._shape.setBounds(L.latLngBounds(latlng, this._oppositeCorner));
+		// this._shape.setBounds(L.latLngBounds(latlng, this._oppositeCorner));
 
 		// Reposition the move marker
 		bounds = this._shape.getBounds();
@@ -90,13 +101,17 @@ L.Edit.Rectangle = L.Edit.SimpleShape.extend({
 	},
 
 	_getCorners: function () {
-		var bounds = this._shape.getBounds(),
-			nw = bounds.getNorthWest(),
-			ne = bounds.getNorthEast(),
-			se = bounds.getSouthEast(),
-			sw = bounds.getSouthWest();
+		// var latlngs = [this._shape._latlngs];
+		//
+		// console.log(latlngs);
 
-		return [nw, ne, se, sw];
+		// var bounds = this._shape.getBounds(),
+		// 	nw = bounds.getNorthWest(),
+		// 	ne = bounds.getNorthEast(),
+		// 	se = bounds.getSouthEast(),
+		// 	sw = bounds.getSouthWest();
+
+		return this._shape._latlngs[ 0 ];
 	},
 
 	_toggleCornerMarkers: function (opacity) {

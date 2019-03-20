@@ -190,6 +190,7 @@ L.Handler.PathTransform = L.Handler.extend({
 
     this._handlersGroup = null;
     this._rect = null;
+		this._rectShape = null;
     this._handlers = [];
   },
 
@@ -810,13 +811,23 @@ L.Handler.PathTransform = L.Handler.extend({
 
 	_onEditEnd: function() {
 		this._path.transform.enable();
-		// this._path.transform._updateHandlers();
 	}
 });
 
 
 L.Polyline.addInitHook(function() {
-  if (this.options.transform) {
-    this.transform = new L.Handler.PathTransform(this, this.options.transform);
-  }
+	if (this.transform) {
+		return;
+	}
+
+	if (L.Handler.PathTransform) {
+		this.transform = new L.Handler.PathTransform(this);
+
+		if (this.options.transformable) {
+			this.transform.enable();
+		}
+	}
+  // if (this.options.transform) {
+  //   this.transform = new L.Handler.PathTransform(this, this.options.transform);
+  // }
 });

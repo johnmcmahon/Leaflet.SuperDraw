@@ -51,6 +51,10 @@ L.Edit.SimpleShape = L.Handler.extend({
 				this._map.addLayer(this._markerGroup);
 			}
 		}
+
+		shape
+			.on( 'transformstart', this._onTransformStart, this )
+			.on( 'transformed', this._onTransformEnd, this );
 	},
 
 	// @method removeHooks(): void
@@ -217,6 +221,14 @@ L.Edit.SimpleShape = L.Handler.extend({
 		marker.setOpacity(1);
 		this.updateMarkers();
 		this._fireEdit();
+	},
+
+	_onTransformStart: function() {
+		this._shape.editing.disable();
+	},
+
+	_onTransformEnd: function() {
+		this._shape.editing.enable();
 	},
 
 	_move: function () {

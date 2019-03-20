@@ -161,7 +161,7 @@ L.Edit.PolyVerticesEdit = L.Handler.extend({
 			this._poly._map.addLayer(this._markerGroup);
 		}
 
-		this._poly
+		poly
 			.on( 'transformstart', this._onTransformStart, this )
 			.on( 'transformed', this._onTransformEnd, this );
 	},
@@ -192,6 +192,10 @@ L.Edit.PolyVerticesEdit = L.Handler.extend({
 			delete this._markerGroup;
 			delete this._markers;
 		}
+
+		// poly
+		// 	.off( 'transformstart', this._onTransformStart, this )
+		// 	.off( 'transformed', this._onTransformEnd, this );
 	},
 
 	// @method updateMarkers(): void
@@ -421,6 +425,7 @@ L.Edit.PolyVerticesEdit = L.Handler.extend({
 	},
 
 	_onTransformStart: function() {
+		console.log( 'transform start' );
 		this._poly.editing.disable();
 	},
 
