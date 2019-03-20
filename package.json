@@ -1,6 +1,6 @@
 {
   "name": "leaflet-super-draw",
-  "version": "1.0.9",
+  "version": "1.1.0",
   "description": "Vector drawing plugin for Leaflet",
   "devDependencies": {
     "eslint": "^3.5.0 <3.6.0",
@@ -96,4 +96,3 @@
     }
   }
 }
-
