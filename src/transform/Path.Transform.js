@@ -298,6 +298,7 @@ L.Handler.PathTransform = L.Handler.extend({
     this._updateHandlers();
 
     map.dragging.enable();
+    this._path.edited = true;
     this._path.fire('transformed', {
       matrix: matrix,
       scale: scale,
