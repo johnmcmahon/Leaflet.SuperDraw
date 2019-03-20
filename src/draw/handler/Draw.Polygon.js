@@ -127,11 +127,3 @@ L.Draw.Polygon = L.Draw.Polyline.extend({
 		}
 	}
 });
-
-// L.Draw.Feature.addInitHook(function() {
-// 	console.log( 'init' );
-// 	if (this.options.transform) {
-// 		this.transform = new L.Handler.PathTransform(this, this.options.transform);
-// 		console.log( this.transform );
-// 	}
-// });

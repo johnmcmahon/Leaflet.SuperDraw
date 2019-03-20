@@ -340,8 +340,6 @@ L.Edit.PolyVerticesEdit = L.Handler.extend({
 			}
 		}
 
-		// console.log( 'marker: ', marker );
-
 		if (marker._middleLeft) {
 			marker._middleLeft.setLatLng(this._getMiddleLatLng(marker._prev, marker));
 		}
@@ -352,9 +350,7 @@ L.Edit.PolyVerticesEdit = L.Handler.extend({
 		//refresh the bounds when draging
 		this._poly._bounds._southWest = L.latLng(Infinity, Infinity);
 		this._poly._bounds._northEast = L.latLng(-Infinity, -Infinity);
-		// console.log( this._poly._bounds );
 		var latlngs = this._poly.getLatLngs();
-		// console.log( 'latlngs:', latlngs );
 		this._poly._convertLatLngs(latlngs, true);
 		this._poly.redraw();
 		this._poly.fire('editdrag');
@@ -519,7 +515,6 @@ L.Edit.PolyVerticesEdit = L.Handler.extend({
 });
 
 L.Polyline.addInitHook(function () {
-	console.log( 'init' );
 	// Check to see if handler has already been initialized. This is to support versions of Leaflet that still have L.Handler.PolyEdit
 	if (this.editing) {
 		return;
