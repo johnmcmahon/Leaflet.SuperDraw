@@ -155,18 +155,21 @@ L.Handler.PathTransform = L.Handler.extend({
 			.on('editstart', this._onEditStart, this)
 			.on('edit', this._onEditEnd, this);
 
-		var debounce = (fn, time) => {
-			let timeout;
+		var debounce = function(fn, time) {
+			var timeout,
+					that = this;
 
 			return function() {
-				const functionCall = () => fn.apply(this, arguments);
+				var functionCall = function(){
+					fn.apply(that, arguments);
+				};
 
 				clearTimeout(timeout);
 				timeout = setTimeout(functionCall, time);
 			}
 		};
 
-    var onZoomEnd = debounce( function() {
+    var onZoomEnd = debounce.call( this, function() {
 			this.reset();
 		}, 500 );
 
