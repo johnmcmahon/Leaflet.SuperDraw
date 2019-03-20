@@ -33,6 +33,7 @@ L.Draw.Polyline = L.Draw.Feature.extend({
 			weight: 4,
 			opacity: 0.5,
 			fill: false,
+			fillColor: '#3388ff',
 			clickable: true
 		},
 		metric: true, // Whether to use the metric measurement system or imperial

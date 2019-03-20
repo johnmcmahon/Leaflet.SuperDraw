@@ -160,6 +160,10 @@ L.Edit.PolyVerticesEdit = L.Handler.extend({
 			}
 			this._poly._map.addLayer(this._markerGroup);
 		}
+
+		this._poly
+			.on( 'transformstart', this._onTransformStart, this )
+			.on( 'transformed', this._onTransformEnd, this );
 	},
 
 	// @method removeHooks(): void
@@ -253,6 +257,18 @@ L.Edit.PolyVerticesEdit = L.Handler.extend({
 		return marker;
 	},
 
+	rotatePoint: function(map, latlngPoint, angleDeg, latlngCenter) {
+		var maxzoom = map.getMaxZoom();
+		if (maxzoom === Infinity)
+			maxzoom = map.getZoom();
+		var angleRad = angleDeg*Math.PI/180,
+				pPoint = map.project(latlngPoint, maxzoom),
+				pCenter = map.project(latlngCenter, maxzoom),
+				x2 = Math.cos(angleRad)*(pPoint.x-pCenter.x) - Math.sin(angleRad)*(pPoint.y-pCenter.y) + pCenter.x,
+				y2 = Math.sin(angleRad)*(pPoint.x-pCenter.x) + Math.cos(angleRad)*(pPoint.y-pCenter.y) + pCenter.y;
+		return map.unproject(new L.Point(x2,y2), maxzoom);
+	},
+
 	_onMarkerDragStart: function () {
 		this._poly.fire('editstart');
 	},
@@ -294,32 +310,17 @@ L.Edit.PolyVerticesEdit = L.Handler.extend({
 		var marker = e.target;
 		var poly = this._poly;
 
+		var oldOrigLatLng = L.LatLngUtil.cloneLatLng(marker._origLatLng);
 		L.extend(marker._origLatLng, marker._latlng);
-
-		if (marker._middleLeft) {
-			marker._middleLeft.setLatLng(this._getMiddleLatLng(marker._prev, marker));
-		}
-		if (marker._middleRight) {
-			marker._middleRight.setLatLng(this._getMiddleLatLng(marker, marker._next));
-		}
-
 		if (poly.options.poly) {
 			var tooltip = poly._map._editTooltip; // Access the tooltip
 
 			// If we don't allow intersections and the polygon intersects
 			if (!poly.options.poly.allowIntersection && poly.intersects()) {
-
+				L.extend(marker._origLatLng, oldOrigLatLng);
+				marker.setLatLng(oldOrigLatLng);
 				var originalColor = poly.options.color;
 				poly.setStyle({color: this.options.drawError.color});
-
-				// Manually trigger 'dragend' behavior on marker we are about to remove
-				// WORKAROUND: introduced in 1.0.0-rc2, may be related to #4484
-				if (L.version.indexOf('0.7') !== 0) {
-					marker.dragging._draggable._onUp(e);
-				}
-				this._onMarkerClick(e); // Remove violating marker
-				// FIXME: Reset the marker to it's original position (instead of remove)
-
 				if (tooltip) {
 					tooltip.updateContent({
 						text: L.drawLocal.draw.handlers.polyline.error
@@ -338,6 +339,14 @@ L.Edit.PolyVerticesEdit = L.Handler.extend({
 				}, 1000);
 			}
 		}
+
+		if (marker._middleLeft) {
+			marker._middleLeft.setLatLng(this._getMiddleLatLng(marker._prev, marker));
+		}
+		if (marker._middleRight) {
+			marker._middleRight.setLatLng(this._getMiddleLatLng(marker, marker._next));
+		}
+
 		//refresh the bounds when draging
 		this._poly._bounds._southWest = L.latLng(Infinity, Infinity);
 		this._poly._bounds._northEast = L.latLng(-Infinity, -Infinity);
@@ -409,6 +418,14 @@ L.Edit.PolyVerticesEdit = L.Handler.extend({
 
 		this._poly.redraw();
 		this.updateMarkers();
+	},
+
+	_onTransformStart: function() {
+		this._poly.editing.disable();
+	},
+
+	_onTransformEnd: function() {
+		this._poly.editing.enable();
 	},
 
 	_updateIndexes: function (index, delta) {
@@ -498,7 +515,6 @@ L.Edit.PolyVerticesEdit = L.Handler.extend({
 });
 
 L.Polyline.addInitHook(function () {
-
 	// Check to see if handler has already been initialized. This is to support versions of Leaflet that still have L.Handler.PolyEdit
 	if (this.editing) {
 		return;
@@ -507,6 +523,7 @@ L.Polyline.addInitHook(function () {
 	if (L.Edit.Poly) {
 
 		this.editing = new L.Edit.Poly(this);
+		// this.transform = new L.Handler.PathTransform(this, this.options.transform);
 
 		if (this.options.editable) {
 			this.editing.enable();
