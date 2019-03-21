@@ -235,7 +235,6 @@ L.EditToolbar.Edit = L.Handler.extend({
 					latlngs[ 0 ].lng === latlngs[ 1 ].lng &&
 					latlngs[ 1 ].lat === latlngs[ 2 ].lat &&
 					latlngs[ 2 ].lng === latlngs[ 3 ].lng ) {
-					console.log( 'match' );
 					layer.editing = null;
 				}
 			}
@@ -246,6 +245,10 @@ L.EditToolbar.Edit = L.Handler.extend({
 
 			if (layer.transform) {
 				layer.transform.enable();
+			}
+
+			if (layer.dragging) {
+				layer.dragging.enable();
 			}
 		}
 	},
@@ -287,6 +290,10 @@ L.EditToolbar.Edit = L.Handler.extend({
 
 			if (layer.transform) {
 				layer.transform.disable();
+			}
+
+			if (layer.dragging) {
+				layer.dragging.disable();
 			}
 		}
 	},

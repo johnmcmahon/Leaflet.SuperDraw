@@ -202,6 +202,7 @@ L.Handler.PathDrag = L.Handler.extend( /** @lends  L.Path.Drag.prototype */ {
 
     // consistency
     if (moved) {
+    	this._path.edited = true;
       this._path.fire('dragend', {
         distance: distance(this._dragStartPoint, containerPoint)
       });

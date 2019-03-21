@@ -32,11 +32,7 @@ L.Edit.Rectangle = L.Edit.SimpleShape.extend({
 			marker = e.target,
 			currentCornerIndex = marker._cornerIndex;
 
-		console.log( corners );
-		console.log( currentCornerIndex );
-		console.log( (currentCornerIndex + 2) % 4 );
 		this._oppositeCorner = corners[(currentCornerIndex + 2) % 4];
-		console.log( this._oppositeCorner );
 
 		this._toggleCornerMarkers(0, currentCornerIndex);
 	},

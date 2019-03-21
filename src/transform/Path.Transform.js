@@ -61,7 +61,8 @@ L.Handler.PathTransform = L.Handler.extend({
       fillOpacity: 1,
       weight:      2,
       opacity:     0.7,
-      setCursor:   true
+      setCursor:   true,
+			renderer: L.svg()
     },
 
     // rectangle
@@ -70,17 +71,19 @@ L.Handler.PathTransform = L.Handler.extend({
       opacity:   1,
       dashArray: [3, 3],
       fill:      false,
-      noClip:    true
+      noClip:    true,
+			renderer: L.svg()
     },
 
     // rotation handler
     rotateHandleOptions: {
       weight:    1,
       opacity:   1,
-      setCursor: true
+      setCursor: true,
+			renderer: L.svg()
     },
     // rotation handle length
-    handleLength: 20,
+    handleLength: 25,
 
     // maybe I'll add skewing in the future
     edgesCount:   4,

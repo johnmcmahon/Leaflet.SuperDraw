@@ -163,7 +163,9 @@ L.Edit.PolyVerticesEdit = L.Handler.extend({
 
 		poly
 			.on( 'transformstart', this._onTransformStart, this )
-			.on( 'transformed', this._onTransformEnd, this );
+			.on( 'transformed', this._onTransformEnd, this )
+			.on( 'dragstart', this._onTransformStart, this )
+			.on( 'dragend', this._onTransformEnd, this );
 	},
 
 	// @method removeHooks(): void
@@ -425,12 +427,12 @@ L.Edit.PolyVerticesEdit = L.Handler.extend({
 	},
 
 	_onTransformStart: function() {
-		console.log( 'transform start' );
-		this._poly.editing.disable();
+		this.disable();
 	},
 
 	_onTransformEnd: function() {
-		this._poly.editing.enable();
+		this.enable();
+		this._fireEdit();
 	},
 
 	_updateIndexes: function (index, delta) {
