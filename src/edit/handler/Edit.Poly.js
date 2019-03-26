@@ -427,11 +427,11 @@ L.Edit.PolyVerticesEdit = L.Handler.extend({
 	},
 
 	_onTransformStart: function() {
-		this.disable();
+		this._poly.editing.disable();
 	},
 
 	_onTransformEnd: function() {
-		this.enable();
+		this._poly.editing.enable();
 		this._fireEdit();
 	},
 

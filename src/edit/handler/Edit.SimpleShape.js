@@ -224,11 +224,11 @@ L.Edit.SimpleShape = L.Handler.extend({
 	},
 
 	_onTransformStart: function() {
-		this.disable();
+		this._shape.disable();
 	},
 
 	_onTransformEnd: function() {
-		this.enable();
+		this._shape.enable();
 		this._fireEdit();
 	},
 
